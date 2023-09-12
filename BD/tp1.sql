@@ -6,9 +6,7 @@ exec dbms_stats.gather_table_stats( 'S5A08B', 'EMPLOYE');
 exec dbms_stats.gather_table_stats('S5A08B','EMPLOYE', method_opt=>'FOR COLUMNS HEBDO');
 
 select * from user_tab_statistics;
-
 select * from user_tab_col_statistics;
-
 select * from user_tab_histograms;
 
 select ENDPOINT_NUMBER , ENDPOINT_VALUE
@@ -38,7 +36,7 @@ table(dbms_xplan.display_cursor(s.sql_id,s.child_number,'all')) t
 where s.sql_text like 'duree' and s.sql_text not like '%v$sql%'
 and s.parsing_schema_name like 'S5A08B';
 
-explain plan set statement_id = 'ex_plan1' for requete-select-from-where;
+//explain plan set statement_id = 'ex_plan1' for requete-select-from-where;
 
 select * from table(dbms_xplan.display(statement_id=>'ex_plan1', format=>'all'));
 
@@ -50,20 +48,25 @@ alter system flush shared_pool;
 alter system flush buffer_cache;
 
 
-
-select * from basetd.distribution;
+//Ex6
+select * from distribution;
 
 create table Distribution as select * from basetd.distribution;
 create table Operateur as select * from basetd.operateur;
 create table Commune as select * from basetd.commune;
 
 CREATE INDEX INDX_NUMFO ON distribution(numfo);
-
-INDEX RANGE SCAN;
-
-
+ 
+ 
 
 
+
+//Ex7
+
+
+
+
+//Ex8
 
 
 
@@ -95,6 +98,7 @@ CONSTRAINT pk_TRAVAIL PRIMARY KEY(NUEMPL,NUPROJ)
 
 CREATE TABLE CONCERNE(
 NUSERV NUMBER(2, 0) NOT NULL, NUPROJ NUMBER(3, 0) NOT NULL);
+
 
 
 alter table employe add constraint pk_empl primary key (nuempl);
