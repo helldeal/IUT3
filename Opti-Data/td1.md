@@ -106,3 +106,16 @@ Seuil | TP | FP | TN | FN | TFP | TTP | P | R
 0,7 |||||||
 0,8 |||||||
 0,9 |||||||
+
+![](CPR.jpg)
+Courbe Précision-Rappel
+
+# Exercice 5
+
+a: MacP = 0.625
+
+b: MicP = 0.58
+
+c: bonne précision mais 
+
+d: MacR = 0.58  MicR = 0.58 
