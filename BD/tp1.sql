@@ -20,6 +20,9 @@ WHERE t.nuproj = 3;
 
 SELECT * FROM table (dbms_xplan.display_cursor);
 
+alter system flush shared_pool;
+alter system flush buffer_cache;
+
 select sql_id, child_number, sql_text from v$sql where sql_text 
 not like '%v$sql%' and parsing_schema_name like 'S5A08B';
 
@@ -44,8 +47,6 @@ select * from table(dbms_xplan.display(statement_id=>'ex_plan1', format=>'all'))
 
 
 
-alter system flush shared_pool;
-alter system flush buffer_cache;
 
 
 //Ex6
@@ -63,7 +64,101 @@ CREATE INDEX INDX_NUMFO ON distribution(numfo);
 
 //Ex7
 
+Create or replace procedure distribution_static(stat in varchar2 default NULL) as
+cursor ma_requete is select id from distribution where statut=stat or statut is null;
+id number(10);
+cursor plan is select plan_table_output from table(dbms_xplan.display_cursor);
+v_plan_table_output varchar2(1000);
+begin
+dbms_output.enable(1000000);
+open ma_requete;
+loop
+fetch ma_requete into id;
+exit when ma_requete%notfound;
+dbms_output.put_line(id);
+end loop;
+close ma_requete;
 
+dbms_output.put_line(
+chr(10)||'Résultat de la requête suivante :'||
+chr(10)||
+chr(10)||'select id from distribution where'||
+chr(10)||'(statut=stat;');
+dbms_output.put_line(chr(10));
+dbms_output.put_line('Plan Execution:'||chr(10));
+open plan;
+loop
+fetch plan into v_plan_table_output;
+exit when plan%notfound;
+dbms_output.put_line(v_plan_table_output);
+end loop;
+close plan;
+end;
+/
+
+
+Create or replace procedure distribution_dynamique(statut in varchar2 default NULL,code in number default NULL) as
+
+TYPE cursor_type IS REF CURSOR;
+c_cursor cursor_type;
+
+ma_requete varchar2(300);
+v_id number;
+v_statut varchar2(60);
+v_plan_table_output varchar2(200);
+cursor plan is select plan_table_output from table(dbms_xplan.display_cursor);
+
+begin
+
+dbms_output.enable(1000000);
+
+ma_requete:='select id from distribution where 1 = 1';
+
+if statut is not null then ma_requete:=ma_requete||' and statut=:statut';end if;
+
+if code is not null then ma_requete:=ma_requete||' and ADR_NM_CP=:code';
+end if;
+
+if statut is null and code is null then
+open c_cursor for ma_requete;
+end if;
+
+if statut is not null and code is null then
+open c_cursor for ma_requete using statut;
+end if;
+
+if statut is null and code is not null then
+open c_cursor for ma_requete using code;
+end if;
+
+if statut is not null and code is not null then
+open c_cursor for ma_requete using statut,code;
+end if;
+
+loop
+fetch c_cursor into v_id;
+exit when c_cursor%notfound;
+dbms_output.put_line(v_id);
+end loop;
+close c_cursor;
+dbms_output.put_line(
+chr(10)||'Résultat de ma requête:'||
+chr(10)||
+chr(10)||ma_requete);
+
+dbms_output.put_line(chr(10)||' Plan :'||chr(10));
+open plan;
+loop
+fetch plan into v_plan_table_output;
+exit when plan%notfound;
+dbms_output.put_line(v_plan_table_output);
+end loop;
+close plan;
+end;
+/
+
+select * from basetd.distribution;
+exec distribution_dynamique('En service',2);
 
 
 //Ex8
