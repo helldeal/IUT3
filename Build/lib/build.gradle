@@ -16,9 +16,11 @@ plugins {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
-    group = 'org.iut.nantes'
-    version = '0.1.0'
 }
+
+group = 'org.iut.nantes'
+version = '0.1.0'
+
 
 dependencies {
     // Use the Kotlin JUnit 5 integration.
@@ -32,6 +34,8 @@ dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
 
+    implementation 'group: org.springframework.ws name: spring-ws-core version: 2.4.0.RELEASE'
+
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:32.1.1-jre'
 }
@@ -44,12 +48,39 @@ java {
 }
 
 compileJava {
-   sourceCompatibility = JavaVersion.VERSION_1_8
-   targetCompatibility = JavaVersion.VERSION_1_8
+   sourceCompatibility = JavaVersion.VERSION_20
+   targetCompatibility = JavaVersion.VERSION_20
    options.encoding = 'UTF-8'
 }
 
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+test.doFirst {
+    println 'Running tests'
+}
+test.doLast {
+    println 'Tous les tests sont OK'
+}
+
+task A {
+    doFirst {
+        println 'Bonjour'
+        println 'Ca va'
+    }
+    doLast {
+        println 'Au revoir'
+    }
+
+}
+task B(dependsOn: 'A') {
+    doFirst {
+        println 'Configuration de B'
+    }
+}
+task C(dependsOn: 'B') {
+    doFirst {
+    }
 }

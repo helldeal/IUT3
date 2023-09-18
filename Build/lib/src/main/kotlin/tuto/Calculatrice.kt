@@ -4,7 +4,7 @@
 package tuto
 
 class Calculatrice {
-    fun add(a Int,b Int): Int {
+    fun add(a:Int,b :Int): Int {
         return a+b
     }
 }
