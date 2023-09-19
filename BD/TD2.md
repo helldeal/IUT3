@@ -94,6 +94,8 @@ On considère le tableau de l’exercice précédent. Compléter ce tableau en
 adoptant une approche préventive (Wait-Die / Wound-Wait). Comparer le résultat de
 ces deux approches.
 
+Wait - Die 
+
 | TP (PSE) | T2(PS) | T3 (PX) | T4 (PUE) | Temps |  pile de verrou   |   attentes  |
 | ------ | ---- | ----- | ------ | --- | --- | --- |
 |    D     |        |         |          |   t1    |     |     |
@@ -113,3 +115,13 @@ ces deux approches.
 |          |        |  Find A |          |   t15   |     |     |
 |  Commit  |        |         |          |   t16   |      |     |
 |          |        |  Commit |          |   t17   |     |     |
+
+
+## Exercice 4 
+Vous ouvrez deux fenêtres SQLDevelopper pour avoir deux transactions concurrentes.
+Vous appelez vos connexions fenetre1et fenetre2. Vous faites ce qui est indiqué ci-dessous. Vous
+expliquez ce qui se passe et vous justifiez vos réponses. Les questions sont indépendantes : les
+modifications apportées à la base dans une question ne sont pas prises en compte dans les autres
+questions (sauf indication).
+
+1)
