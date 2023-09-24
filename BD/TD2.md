@@ -1,5 +1,8 @@
 # Gestion de la concurrence d’accès
 
+Alexandre Clenet - Florian Tran
+Année 3 : Groupe 1-2
+
 ## Exercice 1 
 Indiquer pour chacune de ces questions le résultat de l’exécution des transactions T1 et T2 (sérialisable, perte de mise à jour, etc.) .
 
@@ -80,12 +83,12 @@ indiquant à chaque instant t l’état de la pile et le graphe d’attente entr
 |          | Find A |         |          |   t8    | T2,S,A    |     |
 |          |        |         |  Upd B   |   t9    | T4,X,B   |  T4(B) -> T2(B)   |
 |          |        |  Find B |          |   t10   | T3,X,B   |  T3(B) -> T4(B) -> T2(B)   |  
-|  Find B  |        |         |          |   t11   | T1,SE,B    | T1(B) -> T3(B) -> T4(B) -> T2(B)   |
-|          |  Udp B |         |          |   t12   | fin T4,UE,B   |     |
-|          |        |         |  Commit  |   t13   | fin T4,X,B    |     |
-|          | Commit |         |          |   t14   | fin T2,S,A    |     |
-|          |        |  Find A |          |   t15   |     |  Pas possible   |
-|  Commit  |        |         |          |   t16   | fin T1,SE,A  |     |
+|  Find B  |        |         |          |   t11   | T1,SE,B    | T3(B) -> T4(B) -> T2(B)   |
+|          |  Udp B |         |          |   t12   | T2,X,B   |  T3(B) -> T4(B)   |
+|          |        |         |  Commit  |   t13   |     |     |
+|          | Commit |         |          |   t14   |    |     |
+|          |        |  Find A |          |   t15   |  T3,X,A      |    |
+|  Commit  |        |         |          |   t16   |  |     |
 |          |        |  Commit |          |   t17   |     |     |
 
 
@@ -106,13 +109,13 @@ Wait - Die
 |          | Find B |         |          |   t6    |  T2,S,B   |     |
 |          |        |    D    |          |   t7    |     |     |
 |          | Find A |         |          |   t8    | T2,S,A    |     |
-|          |        |         |  Upd B   |   t9    | T4,X,B   |  T4(B) -> T2(B)   |
-|          |        |  Find B |          |   t10   | T3,X,B   |   |  
-|  Find B  |        |         |          |   t11   | T1,SE,B    |   |
-|          |  Udp B |         |          |   t12   |    |     |
+|          |        |         |  Upd B   |   t9    | T4,X,B   |  T4 annulé car plus jeune que T2   |
+|          |        |  Find B |          |   t10   | T3,X,B   |  T3 annulé car plus jeune que T2 |  
+|  Find B  |        |         |          |   t11   | T1,SE,B    | T1/T2(B)  |
+|          |  Udp B |         |          |   t12   | T2,X,B   |  T2 annulé car plus jeune que T1   |
 |          |        |         |  Commit  |   t13   |     |     |
 |          | Commit |         |          |   t14   |     |     |
-|          |        |  Find A |          |   t15   |     |     |
+|          |        |  Find A |          |   t15   | T3,X,A    |     |
 |  Commit  |        |         |          |   t16   |      |     |
 |          |        |  Commit |          |   t17   |     |     |
 
@@ -156,3 +159,22 @@ Les 2 fenêtres select respectivement l'employé 100 et 101 pour une mise à jou
 La fenêtre 1 verouille la table employé en mode partage donc la fenêtre 2 est en file d'attente pour son insertion. Une fois le commit fait, la fenêtre 2 fait son insertion.
 
 11:
+La fenêtre 1 verouille la table employé en mode partage donc la fenêtre 2 est en file d'attente pour son insertion. Une fois le commit fait, la fenêtre 2 fait son insertion.
+
+12:
+La fenêtre 2 verouille les tables employé et travail en mode partage donc la fenêtre 1 est en file d'attente pour son insertion. Une fois l'insertion et le commit fait, la fenêtre 1 fait son insertion.
+
+13:
+La fenêtre 1 verouille la table employé en mode partage ainsi que la fenêtre 2 mais pour une seule ligne la fenêtre 2 peux donc faire sa modification sur sa ligne voulu et la fenêtre 1 fait aussi son update en parrallèle.
+
+14:
+Les fenêtre 1 et 2 verouillent la table employé en mode partage pour une seule ligne. La fenêtre 2 peux donc faire sa modification sur sa ligne voulu et la fenêtre 1 fait aussi son update en parrallèle.
+
+15:
+La fenêtre 1 verrouille la table employé en mode exclusif donc la fenêtre 2 doit attendre le commit de la fenêtre 1 avant de pouvoir mettre son verrou
+
+16:
+Les 2 fenêtres selectionnent le même employé pour une mise à jour. Priorité à la fenêtre 2 et donc la fenêtre 1 qui doit attendre le commit
+
+17:
+La fenêtre 1 verrouille la table employé en mode exclusif pour une ligne et la fenêtre 2 verrouille la table employé en mode partagé pour une ligne. Les 2 premiers update ne pose aucun problème car c'est sur 2 employés distincts. Pour le 2eme update de la fenêtre 1, il est en attente du commit car c'est l'employé modifié par la fenêtre 2 (Row Exclusive et Row Shared pas compatible)
