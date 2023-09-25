@@ -80,5 +80,84 @@ Exemple1 e1 = new Exemple1(1);
 EXEC : 
 java Exemple1.java
 The result is 6
-
 ```
+
+## Exercice Package
+```
+IUT3\Build\jdk\fr\nantes\iut\lpmiar> java .\Exemple1.java
+The result is 6
+```
+
+## Exercice
+Donnez les classpath pour les ensembles suivants
+1. toutes les classes et toutes les archives dans vrac          
+   /home/student/java/encours/vrac/*
+2. les paquetages utils.text et utils.io     
+   /home/student/java/encours/utils/*
+   /home/student/java/stables/utils/*
+3. toutes les archives dans libs + les paquetages utils.text et utils.io    
+   /home/student/java/stables/libs
+   /home/student/java/encours/utils/*
+   /home/student/java/stables/utils/*
+
+## Que font les commandes suivantes ?
+
+java -cp encours/vrac:stables/libs/* Test 3 carottes :   
+  Exécute le programme Java Test avec les arguments 3 et carottes.
+  Utilise les fichiers de classe dans les répertoires encours/vrac et stables/libs/*.
+
+java -jar stables/libs/utils.jar 3 radis :   
+  Exécute le programme Java contenu dans le fichier JAR utils.jar.
+  Passe les arguments 3 et radis au programme.
+
+java -cp stables/libs/* utils.io.TestIOUtils :   
+  Exécute la classe Java utils.io.TestIOUtils.
+  Utilise tous les fichiers JAR et répertoires du répertoire stables/libs/ comme classpath.
+
+java -version:1.5 -verbose:class -jar stables/libs/a.jar :   
+  Exécute le fichier JAR a.jar.
+  Utilise Java version 1.5.
+  Active la sortie détaillée du chargement des classes (-verbose:class).
+
+## Exercices
+
+1. Créez un jar exécutable pour la classe fr.nantes.iut.lpmiar.Exemple1 :  
+   Après avoir créé un manifeste à la source    
+   jar cfm Exemple1.jar manifest.txt\fr\nantes\iut\lpmiar\Exemple1.class
+2. Archivage d’une application :
+   Structure :  
+   project/  
+  ├── src/  
+  │   ├── app/  
+  │   │   └── ... (sources de l'application)  
+  │   └── utils/  
+  │       └── ... (sources d'utilitaires)  
+  ├── build/  
+  │   ├── app/  
+  │   │   └── ... (bytecode de l'application)  
+  │   └── utils/  
+  │       └── ... (bytecode d'utilitaires)  
+  ├── resources/  
+  │   ├── manifest  
+  └── ...  
+   jar cfm MonApplication.jar resources/manifest -C build app -C build utils
+3. Archivage d’une bibliothèque : 
+   Structure :  
+   mylibrary/   
+  ├── src/  
+  │   └── malib/  
+  │       └── ... (sources du package malib)  
+  ├── build/  
+  │   └── malib/  
+  │       └── ... (bytecode du package malib)  
+  ├── doc/  
+  │   ├── api/  
+  │   │   └── ... (documentation d'API)  
+  ├── ...   
+  jar cfe MalibLibrary.jar malib -C src malib -C build malib -C doc/api malib
+
+  
+
+      
+    
+   
