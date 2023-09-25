@@ -72,12 +72,13 @@ d) Afficher les n-uplets de la table Enseignant
 ### Exercice 4
 
 1) Compléter le schéma UML de l’exercice précédent en tenant compte des nouvelles règles
+   ![](https://cdn.discordapp.com/attachments/763665832949579797/1155890588277800970/image.png)
 2) Traduire le schéma UML en schéma logique Relationnel-Objet.
 3) Implémentez le schéma logique avec Oracle. Il faut penser à ajouter les contraîntes d’intégrité
 (clés primaires et étrangères) suite à l’introduction de la table établissement.
-4) Insérer des tuples dans les tables selon votre choix de manière à répondre aux questions
+1) Insérer des tuples dans les tables selon votre choix de manière à répondre aux questions
 suivantes. Vérifier toutes les contraintes d’intégrités
-5) réponder aux questions suivantes :
+1) réponder aux questions suivantes :
 a) Trouver les systèmes d'exploitation (se) utilisés par des enseignants qui travaillent plus de 25h
 par semaine.
 b) Afficher les numéros de téléphones de l'enseignant responsable du module bd et travaillant dans
