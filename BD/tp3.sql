@@ -19,14 +19,15 @@ INSERT INTO Enseignant (ide, nome, ltel) VALUES (6, 'Nicolas', Tel(7777777777));
 
 SELECT ltel FROM Enseignant WHERE nome = "Thomas";
 
-SELECT e.nome, COUNT(*) from Enseignant e,TABLE(e.ltel) GROUP BY e.nome
+SELECT e.nome, COUNT(*) from Enseignant e,TABLE(e.ltel) GROUP BY e.nome;
 
 SELECT COUNT(*) AS nombre_enseignants
 FROM Enseignant
 WHERE (SELECT COUNT(*) FROM TABLE(ltel)) = 3;
 
-SELECT e.nome FROM Enseignant e where e.nome not in 
-(SELECT e.nome, COUNT(*) from Enseignant e,TABLE(e.ltel) GROUP BY e.nome) f and f.nome=e.nome;
+SELECT nome
+FROM Enseignant
+WHERE (SELECT COUNT(*) FROM TABLE(ltel)) = 0;
 
 
 // Exercice 2
