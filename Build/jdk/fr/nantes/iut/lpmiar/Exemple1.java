@@ -1,4 +1,4 @@
-package jdk;
+package fr.nantes.iut.lpmiar;
 import java.util.Scanner;
 
 public class Exemple1
