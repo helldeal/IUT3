@@ -129,25 +129,18 @@ INSERT INTO Enseignant VALUES (1, 'Martin', Tel(1234567890), Module_Table(Module
 INSERT INTO Enseignant VALUES (2, 'Sophie', Tel(9876543210), Module_Table(Module(2, 'Base de données')), Ordinateur_Table(Ordinateur(102, 'Linux')));
 INSERT INTO Enseignant VALUES (3, 'Dupond', Tel(5555555555), Module_Table(Module(3, 'Réseaux')), Ordinateur_Table(Ordinateur(103, 'Windows')));
 
-
-SELECT e.nome, e.ordinateur.se AS systeme_exploitation, e.ltel
-FROM Enseignant e
+SELECT e.nome, o.se AS systeme_exploitation, e.ltel
+FROM Enseignant e,
+     TABLE(e.ordinateur) o , TABLE(e.ltel) tel
 WHERE e.nome = 'Martin';
--- Output : nome      | systeme_exploitation | ltel
---           --------- | -------------------- | ----------
---           Martin    | Windows              | 1234567890
 
-
-
-SELECT e.nome, e.modules.nomm
+SELECT e.nome
 FROM Enseignant e
-WHERE e.ordinateur.se = 'Windows' AND e.modules IS NOT NULL;
--- Output : nome      | nomm
---           --------- | ---------
---           Martin    | Système
---           Dupond    | Réseaux
-
-
+WHERE EXISTS (
+    SELECT *
+    FROM TABLE(e.ordinateur) o
+    WHERE o.se = 'Windows'
+) AND e.modules IS NOT NULL;
 
 SELECT COUNT(*) AS nombre_enseignants_windows
 FROM Enseignant e
@@ -156,21 +149,93 @@ WHERE EXISTS (
     FROM TABLE(e.ordinateur) o
     WHERE o.se = 'Windows'
 );
--- Output : nombre_enseignants_windows
---           -------------------------
---           2
 
 SELECT * FROM Enseignant;
--- Output : ide | nome    | ltel          | modules                     | ordinateur
---           --- | ------- | ------------- | --------------------------- | -----------------------
---            1  | Martin  | 1234567890    | Module_Table(Module(1, 'Système')) | Ordinateur_Table(Ordinateur(101, 'Windows'))
---            2  | Sophie  | 9876543210    | Module_Table(Module(2, 'Base de données')) | Ordinateur_Table(Ordinateur(102, 'Linux'))
---            3  | Dupond  | 5555555555    | Module_Table(Module(3, 'Réseaux')) | Ordinateur_Table(Ordinateur(103, 'Windows'))
--- Add other rows as needed
 
 
 
+drop table Etablissement;
+CREATE TABLE Etablissement (
+    num INTEGER PRIMARY KEY,
+    ville VARCHAR2(255) NOT NULL
+);
+
+drop type Intervention;
+drop type Intervention_Table
+/*CREATE OR REPLACE TYPE Intervention AS OBJECT (
+    idi INTEGER,
+    etablissement INTEGER,
+    duree NUMBER(10)
+);*/
+//CREATE OR REPLACE TYPE Intervention_Table AS TABLE OF Intervention;
 
 
+DROP TABLE Enseignant;
+CREATE TABLE Enseignant (
+    ide INTEGER PRIMARY KEY,
+    nome VARCHAR2(255),
+    ltel Tel,
+    modules Module_Table,
+    ordinateur Ordinateur_Table,
+    intervention Intervention_Table
+) NESTED TABLE ltel STORE AS t1 NESTED TABLE modules STORE AS t2 NESTED TABLE ordinateur STORE AS t3 NESTED TABLE intervention STORE AS t4;
 
+-- Insérer des tuples dans la table Etablissement
+INSERT INTO Etablissement VALUES (1, 'Paris');
+INSERT INTO Etablissement VALUES (2, 'Lyon');
+
+-- Insérer des tuples dans la table Enseignant
+INSERT INTO Enseignant VALUES (
+    1,
+    'Martin',
+    Tel(1234567890),
+    Module_Table(Module(1, 'Système')),
+    Ordinateur_Table(Ordinateur(101, 'Windows')),
+    Intervention_Table(Intervention(1, 1, 20))
+);
+
+INSERT INTO Enseignant VALUES (
+    2,
+    'Sophie',
+    Tel(9876543210),
+    Module_Table(Module(2, 'Base de données')),
+    Ordinateur_Table(Ordinateur(102, 'Linux')),
+    Intervention_Table(Intervention(2, 2, 25))
+);
+
+INSERT INTO Enseignant VALUES (
+    3,
+    'Dupond',
+    Tel(5555555555),
+    Module_Table(Module(3, 'Réseaux')),
+    Ordinateur_Table(Ordinateur(103, 'Windows')),
+    Intervention_Table(Intervention(3, 1, 30), Intervention(4, 2, 15))
+);
+
+SELECT * FROM Enseignant;
+SELECT * FROM Etablissement;
+
+SELECT e.nome, o.se
+FROM Enseignant e,
+Table(e.ordinateur) o,
+Table(e.intervention) i
+WHERE i.duree > 25;
+
+SELECT e.ltel
+FROM Enseignant e,
+Table(e.intervention) i,
+Table(e.modules) m,
+Etablissement et
+WHERE i.etablissement = et.num AND m.nomm = 'Base de données' AND et.ville = 'Paris';
+
+SELECT et.num AS numero_etablissement, COUNT(DISTINCT e.nome) AS nombre_enseignants
+FROM Enseignant e,
+Table(e.intervention) i,
+Table(i.etablissement) et
+GROUP BY et.num;
+
+SELECT e.nome, et.ville, i.duree
+FROM Enseignant e,Etablissement et,
+Table(e.intervention) i
+where et.num = i.etablissement;
 
