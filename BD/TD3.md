@@ -366,3 +366,288 @@ Dupond	Lyon	15
 
 
 
+## II) Les tables d’objets
+### Exercice 1
+
+1) Traduiser le schéma UML en schéma logique Relationnel-Objet
+
+2) Implémenter le schéma logique avec Oracle
+```sql
+
+--Outpout :
+```
+3) Insérer plusieurs enseignants, modules et ordinateurs dans la base de données afin de répondre
+aux intérrogations de la question suivante. Vous insérez les données en utilisant des requêtes SQL ou avec des programmes PL/SQL.
+```sql
+
+--Outpout :
+```
+4) réponder aux questions suivantes :
+   
+a) Trouver les modules enseignés par Martin
+```sql
+
+--Outpout :
+```
+
+b) Trouver le nom de l'enseignant qui intervient dans le module base de données.
+```sql
+
+--Outpout :
+```
+
+c) Trouver le nombre d’intervenants dans chacun des modules
+```sql
+
+--Outpout :
+```
+
+d) Trouver les numéros de téléphones des intervenants du module système
+```sql
+
+--Outpout :
+```
+
+### Exercice 2 : méthodes dans les tables d’objets
+
+1) Traduire le schéma UML en schéma logique Relationnel-Objet
+   
+2) Implémenter le schéma logique avec Oracle. La méthode getage() sera implémentée avec
+l’option MAP.
+```sql
+
+--Outpout :
+```
+
+3) Ecrire un programme PL/SQL qui permet de
+a) Créer un objet de type Adresse (new adresse (…)), afficher l’adresse sans passer par la
+procédure displayAd()
+```sql
+
+--Outpout :
+```
+
+b) Créer deux objets de type Adresse, comparer ces objets entre eux et afficher l’objet le plus
+grand
+```sql
+
+--Outpout :
+```
+
+c) Créer une personne et afficher ses propriétés avec son adresse en utilisant la méthode
+displayP()
+```sql
+
+--Outpout :
+```
+
+d) Afficher l’identifiant de la personne le plus jeune parmi les personnes suivantes :
+pers1 :<1,’Dupont’,30,NULL>; pers2 : <5,’Martin’,22,NULL>
+```sql
+
+--Outpout :
+```
+
+e) Créer un objet de type personne : <1,'Dupond', 23,NULL>, modifier l'age de Dupont à 34 (au
+lieu de 23) et afficher le résultat
+```sql
+
+--Outpout :
+```
+
+4) Insérer plusieurs personnes dans la base de données en précisant leur adresse
+```sql
+
+--Outpout :
+```
+
+5) réponder aux questions suivantes avec des requête :
+a) Affichez la ville de la personne n° 12 (deux versions)
+```sql
+
+--Outpout :
+```
+
+b) Afficher l’adresse de Martin en utilisant la méthode displayAd() dans un programme
+PL/SQL
+```sql
+
+--Outpout :
+```
+
+c) Ajuter une personne avec adresse NULL :<4,'Martin',35,NULL>.
+Martin habite maintenant à l’adresse 3 rue Garenne à Nantes. Mettre à jour la base de données
+```sql
+
+--Outpout :
+```
+
+
+### Exercice 3
+
+Cas I) l’héritage entre Etudiant et Personne est implémentée sous forme d’une clé étrangère reliant Etudiant à Personne
+
+1) Traduiser le schéma UML en schéma logique Relationnel-Objet
+```sql
+
+--Outpout :
+```
+
+2) Implémenter le schéma logique avec Oracle
+```sql
+
+--Outpout :
+```
+
+3) Ecrire un programme PL/SQL permettant de créer un étudiant et d’afficher toutes ses propriétés
+```sql
+
+--Outpout :
+```
+
+Cas II) l’héritage entre Etudiant et Personne est implémentée sous forme d’une référence reliant
+Etudiant à Personne
+
+1) Traduiser le schéma UML en schéma logique Relationnel-Objet
+```sql
+
+--Outpout :
+```
+
+2) Implémenter le schéma logique avec Oracle
+```sql
+
+--Outpout :
+```
+
+3) Ecrire une requête SQL permettant d’afficher toutes les propriétés d’un étudiant
+```sql
+
+--Outpout :
+```
+
+Cas III) l’héritage entre Etudiant et Personne est implémentée comme étant un héritage de type
+permettant à la classe Etudiant d’hériter les propriétés et les comportement de la classe Personne.
+
+a) Traduire le schéma UML en schéma logique Relationnel-Objet
+```sql
+
+--Outpout :
+```
+
+b) Implémenter le schéma logique avec Oracle
+```sql
+
+--Outpout :
+```
+
+c) Insérer des instances dans la classe Etudiant
+```sql
+
+--Outpout :
+```
+
+d) On utilise maintenant le polymorphisme dans le modèle objet pour afficher toutes les propriétés des étudiants
+```sql
+
+--Outpout :
+```
+
+e) Insérer le tuple :<3,’Kilian’> dans la table personne (Kilian n’est pas inscrit comme étudiant) ; écrire une requête permettant d’afficher les noms des personnes qui ne sont pas reconnues comme étudiants dans la base de données.
+```sql
+
+--Outpout :
+```
+
+f) Ecrire une requête SQL permettant d’afficher les noms de toutes les personnes avec leur
+identifiant
+```sql
+
+--Outpout :
+```
+
+g) Kilian est désormais inscrit comme étudiant avec le numéro étudiant 30. Ecrire un programme
+PL/SQL afin de tenir compte de cette nouvelle information.
+```sql
+
+--Outpout :
+```
+
+h) Kilian n’est plus étudiant. Ecrire un programme PL/SQL pour mettre à jour la base de données.
+```sql
+
+--Outpout :
+```
+
+
+### Exercice 4
+
+Pour maintenir la base dans un état cohérent nous voulons créer des triggers sur les tables Personne et Etudiant. Vous devez faire des tests montrant le résultat d’exécution des triggers
+
+a) Ecrire un trigger permettant lorsque l’on supprime une personne de supprimer cette personne de
+la table etudiant si elle s’y trouve.
+```sql
+
+--Outpout :
+```
+
+b) Ecrire un trigger permettant lorsque l’on ajoute un étudiant d’insérer toutes les informations
+concernant cet étudiant dans la table personne (dans le cas où elles ne s’y trouve pas ) .
+```sql
+
+--Outpout :
+```
+
+
+
+### Exercice 5
+
+Nous souhaitons maintenant ajouter la classe Cours au schéma UML précédent tout en respectant la
+règle suivante : Un étudiant peut suivre un ou plusieurs cours. Chaque cours est caractérisé par un nom et le nom du responsable du module.
+
+a) Modifier le schéma UML précédent
+
+b) Traduire le schéma UML en schéma logique Relationnel-Objet. On suppose que la table Etudiant
+contient une table imbriquée contenant des références à l’ensemble de cours suivi par chaque
+
+c) Implémenter le schéma logique avec Oracle.
+```sql
+
+--Outpout :
+```
+
+d) Insérer des tuples dans chacune des tables
+```sql
+
+--Outpout :
+```
+
+e) Sélectionner les noms des cours suivi par Martin
+```sql
+
+--Outpout :
+```
+
+f) Trouver le nombre d’étudiants suivant chaque cours
+```sql
+
+--Outpout :
+```
+
+g) Trouver le nombre de cours suivi par tous les étudiants
+```sql
+
+--Outpout :
+```
+
+h) Trouver le nombre de cours suivi par chaque étudiant
+```sql
+
+--Outpout :
+```
+
+i) Trouver le nombre moyen de cours dont chaque enseignant est responsable
+```sql
+
+--Outpout :
+```
