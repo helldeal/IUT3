@@ -673,63 +673,126 @@ WHERE p.nomp = 'Martin';
 Cas I) l’héritage entre Etudiant et Personne est implémentée sous forme d’une clé étrangère reliant Etudiant à Personne
 
 1) Traduiser le schéma UML en schéma logique Relationnel-Objet
-```sql
-
---Outpout :
-```
 
 2) Implémenter le schéma logique avec Oracle
 ```sql
+CREATE TABLE Personne (
+    idp NUMBER PRIMARY KEY,
+    nomp VARCHAR2(255) NOT NULL
+);
 
---Outpout :
+CREATE TABLE Etudiant (
+    nume NUMBER PRIMARY KEY,
+    idp NUMBER NOT NULL,
+    CONSTRAINT fk_personne FOREIGN KEY (idp) REFERENCES Personne(idp)
+);
 ```
 
 3) Ecrire un programme PL/SQL permettant de créer un étudiant et d’afficher toutes ses propriétés
 ```sql
+DECLARE
+    v_idp NUMBER;
+    v_nomp VARCHAR2(255);
+    v_nume NUMBER;
+BEGIN
+    v_idp := 1;  
+    v_nomp := 'Martin';
+    INSERT INTO Personne (idp, nomp) VALUES (v_idp, v_nomp);
+    v_nume := 84552;
+    INSERT INTO Etudiant (nume, idp) VALUES (v_nume, v_idp);
+
+    -- Display properties of the student
+    DBMS_OUTPUT.PUT_LINE('Etudiant ID: ' || v_nume);
+    DBMS_OUTPUT.PUT_LINE('Personne ID: ' || v_idp);
+    DBMS_OUTPUT.PUT_LINE('Nom: ' || v_nomp);
+END;
+/
 
 --Outpout :
+Etudiant ID: 84552
+Personne ID: 1
+Nom: Martin
 ```
 
 Cas II) l’héritage entre Etudiant et Personne est implémentée sous forme d’une référence reliant
 Etudiant à Personne
 
 1) Traduiser le schéma UML en schéma logique Relationnel-Objet
-```sql
-
---Outpout :
-```
 
 2) Implémenter le schéma logique avec Oracle
 ```sql
+CREATE OR REPLACE TYPE Personne AS OBJECT(
+    idp NUMBER(10),
+    nomp VARCHAR2(255)
+);
 
---Outpout :
+CREATE OR REPLACE TYPE Etudiant AS OBJECT(
+nume NUMBER ,
+refPersonne REF Personne
+);
+
+CREATE TABLE tPersonne OF Personne(
+    idp PRIMARY KEY,
+    nomp NOT NULL
+);
+
+CREATE TABLE tEtudiant OF Etudiant(
+    nume PRIMARY KEY,
+    refPersonne SCOPE IS tPersonne
+);
 ```
 
 3) Ecrire une requête SQL permettant d’afficher toutes les propriétés d’un étudiant
 ```sql
+INSERT INTO tPersonne VALUES (Personne(1, 'John Doe'));
+INSERT INTO tEtudiant VALUES (Etudiant(202358, (SELECT REF(p) FROM tPersonne p WHERE p.idp = 1)));
 
---Outpout :
+SELECT e.nume, e.refpersonne.idp AS idp, e.refpersonne.nomp AS nomp
+FROM tEtudiant e
+WHERE e.nume = 202358;
+--Outpout : 202358	1	John Doe
 ```
 
 Cas III) l’héritage entre Etudiant et Personne est implémentée comme étant un héritage de type
 permettant à la classe Etudiant d’hériter les propriétés et les comportement de la classe Personne.
 
 a) Traduire le schéma UML en schéma logique Relationnel-Objet
-```sql
-
---Outpout :
-```
 
 b) Implémenter le schéma logique avec Oracle
 ```sql
+CREATE OR REPLACE TYPE Personne AS OBJECT(
+    idp NUMBER(10),
+    nomp VARCHAR2(255),
+    MEMBER PROCEDURE display
+)NOT FINAL;
 
---Outpout :
+CREATE or REPLACE TYPE BODY Personne AS
+    MEMBER PROCEDURE display IS
+    BEGIN
+        dbms_output.put_line('Personne: ' || idp || ', ' || nomp);
+    END;
+END;
+
+CREATE TYPE Etudiant UNDER Personne (
+    nume NUMBER ,
+    OVERRIDING MEMBER PROCEDURE display
+);
+
+CREATE or REPLACE TYPE BODY Etudiant AS
+    OVERRIDING MEMBER PROCEDURE display IS
+    BEGIN
+        dbms_output.put_line('Etudiant: ' || idp || ', ' || nomp || ', ' || nume);
+    END;
+END;
+
+CREATE TABLE PersonneTable OF Personne;
+CREATE TABLE EtudiantTable OF Etudiant;
 ```
 
 c) Insérer des instances dans la classe Etudiant
 ```sql
-
---Outpout :
+INSERT INTO EtudiantTable VALUES (1, 'John', 101);
+INSERT INTO EtudiantTable VALUES (2, 'Jane', 102);
 ```
 
 d) On utilise maintenant le polymorphisme dans le modèle objet pour afficher toutes les propriétés des étudiants
@@ -740,28 +803,42 @@ d) On utilise maintenant le polymorphisme dans le modèle objet pour afficher to
 
 e) Insérer le tuple :<3,’Kilian’> dans la table personne (Kilian n’est pas inscrit comme étudiant) ; écrire une requête permettant d’afficher les noms des personnes qui ne sont pas reconnues comme étudiants dans la base de données.
 ```sql
-
---Outpout :
+INSERT INTO PersonneTable VALUES (3, 'Kilian');
+SELECT nomp FROM PersonneTable MINUS SELECT nomp FROM EtudiantTable;
+--Outpout : Kilian
 ```
 
 f) Ecrire une requête SQL permettant d’afficher les noms de toutes les personnes avec leur
 identifiant
 ```sql
-
+SELECT idp, nomp FROM PersonneTable p
+UNION
+SELECT idp, nomp FROM EtudiantTable e;
 --Outpout :
+1	John
+2	Jane
+3	Kilian
 ```
 
 g) Kilian est désormais inscrit comme étudiant avec le numéro étudiant 30. Ecrire un programme
 PL/SQL afin de tenir compte de cette nouvelle information.
 ```sql
-
---Outpout :
+DECLARE
+BEGIN
+    DELETE FROM PersonneTable WHERE idp=3 ;
+    INSERT INTO EtudiantTable VALUES (3, 'Kilian', 30);
+END;
+/
 ```
 
 h) Kilian n’est plus étudiant. Ecrire un programme PL/SQL pour mettre à jour la base de données.
 ```sql
-
---Outpout :
+DECLARE
+BEGIN
+    DELETE FROM EtudiantTable WHERE nume=30 ;
+    INSERT INTO PersonneTable VALUES (3, 'Kilian');
+END;
+/
 ```
 
 

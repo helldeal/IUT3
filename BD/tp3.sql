@@ -392,8 +392,6 @@ CREATE TABLE tPersonne OF Personne(
     refAdresse SCOPE IS tAdresse
 );
 
-
-
 DECLARE
     myAddress Adresse := Adresse(123, 'Rue de la Paix', 'Paris');
     myPersonne Personne := Personne(1, 'John Doe', 25, myAddress);
@@ -403,16 +401,10 @@ END;
 /
 
 DECLARE
-    -- Creating an instance of Personne
     dupont Personne := Personne(1, 'Dupont', 23, NULL);
 BEGIN
-    -- Displaying the initial state
     DBMS_OUTPUT.PUT_LINE('Before: ' || dupont.displayp);
-    
-    -- Updating the age
     dupont.setage(34);
-    
-    -- Displaying the updated state
     DBMS_OUTPUT.PUT_LINE('After: ' || dupont.displayp);
 END;
 /
@@ -430,8 +422,6 @@ BEGIN
     COMMIT;
 END;
 /
-
-
 
 INSERT INTO tAdresse VALUES (10, 'Rue de la Paix', 'Paris');
 INSERT INTO tAdresse VALUES (62, 'Rue du Faubourg Saint-Honoré', 'Paris');
@@ -473,4 +463,130 @@ WHERE p.idp = 4;
 SELECT p.refadresse.displayad() AS Adresse_de_Martin
 FROM tPersonne p
 WHERE p.nomp = 'Martin';
+
+CREATE TABLE Personne (
+    idp NUMBER PRIMARY KEY,
+    nomp VARCHAR2(255) NOT NULL
+);
+
+CREATE TABLE Etudiant (
+    nume NUMBER PRIMARY KEY,
+    idp NUMBER NOT NULL,
+    CONSTRAINT fk_personne FOREIGN KEY (idp) REFERENCES Personne(idp)
+);
+
+DECLARE
+    v_idp NUMBER;
+    v_nomp VARCHAR2(255);
+    v_nume NUMBER;
+BEGIN
+    v_idp := 1;  
+    v_nomp := 'Martin';
+    INSERT INTO Personne (idp, nomp) VALUES (v_idp, v_nomp);
+    v_nume := 84552;
+    INSERT INTO Etudiant (nume, idp) VALUES (v_nume, v_idp);
+
+    -- Display properties of the student
+    DBMS_OUTPUT.PUT_LINE('Etudiant ID: ' || v_nume);
+    DBMS_OUTPUT.PUT_LINE('Personne ID: ' || v_idp);
+    DBMS_OUTPUT.PUT_LINE('Nom: ' || v_nomp);
+END;
+/
+
+Drop table tEtudiant;
+Drop table tPersonne;
+/*
+CREATE OR REPLACE TYPE Personne AS OBJECT(
+    idp NUMBER(10),
+    nomp VARCHAR2(255)
+);
+
+CREATE OR REPLACE TYPE Etudiant AS OBJECT(
+nume NUMBER ,
+refPersonne REF Personne
+);
+*/
+CREATE TABLE tPersonne OF Personne(
+    idp PRIMARY KEY,
+    nomp NOT NULL
+);
+
+CREATE TABLE tEtudiant OF Etudiant(
+    nume PRIMARY KEY,
+    refPersonne SCOPE IS tPersonne
+);
+
+INSERT INTO tPersonne VALUES (Personne(1, 'John Doe'));
+INSERT INTO tEtudiant VALUES (Etudiant(202358, (SELECT REF(p) FROM tPersonne p WHERE p.idp = 1)));
+
+SELECT e.nume, e.refpersonne.idp AS idp, e.refpersonne.nomp AS nomp
+FROM tEtudiant e
+WHERE e.nume = 202358;
+
+
+/*
+CREATE OR REPLACE TYPE Personne AS OBJECT(
+    idp NUMBER(10),
+    nomp VARCHAR2(255),
+    MEMBER PROCEDURE display
+)NOT FINAL;
+
+CREATE or REPLACE TYPE BODY Personne AS
+    MEMBER PROCEDURE display IS
+    BEGIN
+        dbms_output.put_line('Personne: ' || idp || ', ' || nomp);
+    END;
+END;
+
+CREATE TYPE Etudiant UNDER Personne (
+    nume NUMBER ,
+    OVERRIDING MEMBER PROCEDURE display
+);
+
+CREATE or REPLACE TYPE BODY Etudiant AS
+    OVERRIDING MEMBER PROCEDURE display IS
+    BEGIN
+        dbms_output.put_line('Etudiant: ' || idp || ', ' || nomp || ', ' || nume);
+    END;
+END;
+*/
+
+CREATE TABLE PersonneTable OF Personne;
+CREATE TABLE EtudiantTable OF Etudiant;
+
+INSERT INTO EtudiantTable VALUES (1, 'John', 101);
+INSERT INTO EtudiantTable VALUES (2, 'Jane', 102);
+
+Select * from EtudiantTable;
+
+DECLARE
+    p Personne;
+BEGIN
+    FOR p IN (SELECT VALUE(p) FROM PersonneTable p) LOOP
+        p.display();
+    END LOOP;
+END;
+/
+
+INSERT INTO PersonneTable VALUES (3, 'Kilian');
+
+SELECT nomp FROM PersonneTable MINUS SELECT nomp FROM EtudiantTable;
+
+SELECT idp, nomp FROM PersonneTable p
+UNION
+SELECT idp, nomp FROM EtudiantTable e;
+
+INSERT INTO EtudiantTable VALUES (3, 'Kilian', 30);
+
+
+DECLARE
+BEGIN
+    DELETE FROM EtudiantTable WHERE nume=30 ;
+    INSERT INTO PersonneTable VALUES (3, 'Kilian');
+END;
+/
+
+
+
+
 
