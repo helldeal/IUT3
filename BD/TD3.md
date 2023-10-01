@@ -653,8 +653,18 @@ END;
 c) Ajuter une personne avec adresse NULL :<4,'Martin',35,NULL>.
 Martin habite maintenant à l’adresse 3 rue Garenne à Nantes. Mettre à jour la base de données
 ```sql
+INSERT INTO tPersonne VALUES (4, 'Martin', 35, NULL);
+INSERT INTO tAdresse VALUES (3, 'Rue Garenne', 'Nantes');
 
---Outpout :
+UPDATE tPersonne p
+SET p.refAdresse = (SELECT REF(a) FROM tAdresse a WHERE a.no = 3 AND a.rue = 'Rue Garenne')
+WHERE p.idp = 4;
+
+SELECT p.refadresse.displayad() AS Adresse_de_Martin
+FROM tPersonne p
+WHERE p.nomp = 'Martin';
+
+--Outpout : 3 Rue Garenne, Nantes
 ```
 
 
@@ -755,74 +765,3 @@ h) Kilian n’est plus étudiant. Ecrire un programme PL/SQL pour mettre à jour
 ```
 
 
-### Exercice 4
-
-Pour maintenir la base dans un état cohérent nous voulons créer des triggers sur les tables Personne et Etudiant. Vous devez faire des tests montrant le résultat d’exécution des triggers
-
-a) Ecrire un trigger permettant lorsque l’on supprime une personne de supprimer cette personne de
-la table etudiant si elle s’y trouve.
-```sql
-
---Outpout :
-```
-
-b) Ecrire un trigger permettant lorsque l’on ajoute un étudiant d’insérer toutes les informations
-concernant cet étudiant dans la table personne (dans le cas où elles ne s’y trouve pas ) .
-```sql
-
---Outpout :
-```
-
-
-
-### Exercice 5
-
-Nous souhaitons maintenant ajouter la classe Cours au schéma UML précédent tout en respectant la
-règle suivante : Un étudiant peut suivre un ou plusieurs cours. Chaque cours est caractérisé par un nom et le nom du responsable du module.
-
-a) Modifier le schéma UML précédent
-
-b) Traduire le schéma UML en schéma logique Relationnel-Objet. On suppose que la table Etudiant
-contient une table imbriquée contenant des références à l’ensemble de cours suivi par chaque
-
-c) Implémenter le schéma logique avec Oracle.
-```sql
-
---Outpout :
-```
-
-d) Insérer des tuples dans chacune des tables
-```sql
-
---Outpout :
-```
-
-e) Sélectionner les noms des cours suivi par Martin
-```sql
-
---Outpout :
-```
-
-f) Trouver le nombre d’étudiants suivant chaque cours
-```sql
-
---Outpout :
-```
-
-g) Trouver le nombre de cours suivi par tous les étudiants
-```sql
-
---Outpout :
-```
-
-h) Trouver le nombre de cours suivi par chaque étudiant
-```sql
-
---Outpout :
-```
-
-i) Trouver le nombre moyen de cours dont chaque enseignant est responsable
-```sql
-
---Outpout :
-```

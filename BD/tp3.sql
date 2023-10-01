@@ -461,5 +461,16 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('Pierre Lambert habite ' || v_address);
 END;
+/
 
+INSERT INTO tPersonne VALUES (4, 'Martin', 35, NULL);
+INSERT INTO tAdresse VALUES (3, 'Rue Garenne', 'Nantes');
+
+UPDATE tPersonne p
+SET p.refAdresse = (SELECT REF(a) FROM tAdresse a WHERE a.no = 3 AND a.rue = 'Rue Garenne')
+WHERE p.idp = 4;
+
+SELECT p.refadresse.displayad() AS Adresse_de_Martin
+FROM tPersonne p
+WHERE p.nomp = 'Martin';
 
