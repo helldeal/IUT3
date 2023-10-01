@@ -373,14 +373,43 @@ Dupond	Lyon	15
 
 2) Implémenter le schéma logique avec Oracle
 ```sql
+CREATE OR REPLACE TYPE Tel AS TABLE OF number(10) NULL;
 
---Outpout :
+CREATE OR REPLACE TYPE Module AS OBJECT (
+    idm NUMBER(10),
+    nomm VARCHAR2(255)
+);
+
+create or replace TYPE Enseignant AS OBJECT(
+    ide NUMBER(10),
+    nome VARCHAR2(255),
+    ltel Tel,
+    refmodule REF Module
+);
+
+drop table tModule;
+CREATE TABLE tModule OF Module (
+    idm PRIMARY KEY,
+    nomm NOT NULL
+);
+
+drop table tTel;
+CREATE TABLE tTel OF Tel;
+
+drop table tEnseignant;
+CREATE TABLE tEnseignant OF Enseignant(
+    ide PRIMARY KEY,
+    nome NOT NULL,
+    refmodule SCOPE IS tModule
+)NESTED TABLE ltel STORE AS tTel;
 ```
 3) Insérer plusieurs enseignants, modules et ordinateurs dans la base de données afin de répondre
 aux intérrogations de la question suivante. Vous insérez les données en utilisant des requêtes SQL ou avec des programmes PL/SQL.
 ```sql
-
---Outpout :
+INSERT INTO tModule VALUES (1, 'Base de données');
+INSERT INTO tModule VALUES (2, 'Système');
+INSERT INTO tEnseignant VALUES (101, 'Martin', Tel(1234567890), (SELECT REF(m) FROM tModule m WHERE m.idm = 1));
+INSERT INTO tEnseignant VALUES (102, 'Alice', Tel(9876543210), (SELECT REF(m) FROM tModule m WHERE m.idm = 2));
 ```
 4) réponder aux questions suivantes :
    

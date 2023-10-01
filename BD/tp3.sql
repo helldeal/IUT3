@@ -221,6 +221,16 @@ Table(e.ordinateur) o,
 Table(e.intervention) i
 WHERE i.duree > 25;
 
+
+INSERT INTO Enseignant VALUES (
+    4,
+    'Alex',
+    Tel(4566515458),
+    Module_Table(Module(3, 'Base de données')),
+    Ordinateur_Table(Ordinateur(103, 'Windows')),
+    Intervention_Table(Intervention(5, 1, 20))
+);
+
 SELECT e.ltel
 FROM Enseignant e,
 Table(e.intervention) i,
@@ -228,14 +238,80 @@ Table(e.modules) m,
 Etablissement et
 WHERE i.etablissement = et.num AND m.nomm = 'Base de données' AND et.ville = 'Paris';
 
-SELECT et.num AS numero_etablissement, COUNT(DISTINCT e.nome) AS nombre_enseignants
-FROM Enseignant e,
-Table(e.intervention) i,
-Table(i.etablissement) et
-GROUP BY et.num;
+SELECT e.etablissement, COUNT(DISTINCT e.nome) AS nombre_enseignants
+FROM (
+    SELECT et.ville AS etablissement, e.nome
+    FROM Enseignant e,
+    TABLE(e.intervention) i,
+    Etablissement et
+    WHERE i.etablissement = et.num
+) e
+GROUP BY e.etablissement;
 
 SELECT e.nome, et.ville, i.duree
 FROM Enseignant e,Etablissement et,
 Table(e.intervention) i
 where et.num = i.etablissement;
+
+
+
+--PART II
+
+DROP TYPE Enseignant;
+DROP TYPE Module;
+
+//CREATE OR REPLACE TYPE Tel AS TABLE OF number(10) NULL;
+
+/*CREATE OR REPLACE TYPE Module AS OBJECT (
+    idm NUMBER(10),
+    nomm VARCHAR2(255)
+);*/
+
+/*create or replace TYPE Enseignant AS OBJECT(
+    ide NUMBER(10),
+    nome VARCHAR2(255),
+    ltel Tel,
+    refmodule REF Module
+);*/
+
+drop table tModule;
+CREATE TABLE tModule OF Module (
+    idm PRIMARY KEY,
+    nomm NOT NULL
+);
+
+drop table tTel;
+CREATE TABLE tTel OF Tel;
+
+drop table tEnseigant;
+CREATE TABLE tEnseigant OF Enseignant(
+    ide PRIMARY KEY,
+    nome NOT NULL,
+    ltel Tel,
+    refmodule SCOPE IS tEnseigant
+);
+
+
+
+SELECT * FROM ALL_TYPES WHERE TYPE_NAME = 'MODULE';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
