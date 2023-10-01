@@ -283,30 +283,141 @@ CREATE TABLE tModule OF Module (
 drop table tTel;
 CREATE TABLE tTel OF Tel;
 
-drop table tEnseigant;
-CREATE TABLE tEnseigant OF Enseignant(
+drop table tEnseignant;
+CREATE TABLE tEnseignant OF Enseignant(
     ide PRIMARY KEY,
     nome NOT NULL,
-    ltel Tel,
-    refmodule SCOPE IS tEnseigant
+    refmodule SCOPE IS tModule
+)NESTED TABLE ltel STORE AS tTel;
+
+INSERT INTO tModule VALUES (1, 'Base de données');
+INSERT INTO tModule VALUES (2, 'Système');
+INSERT INTO tEnseignant VALUES (101, 'Martin', Tel(1234567890), (SELECT REF(m) FROM tModule m WHERE m.idm = 1));
+INSERT INTO tEnseignant VALUES (102, 'Alice', Tel(9876543210), (SELECT REF(m) FROM tModule m WHERE m.idm = 2));
+
+SELECT e.refmodule.nomm
+FROM tEnseignant e
+WHERE e.nome = 'Martin';
+
+SELECT e.nome
+FROM tEnseignant e
+WHERE e.refmodule.nomm = 'Base de données';
+
+SELECT e.refmodule.nomm, COUNT(e.ide) AS nombre_intervenants
+FROM tEnseignant e
+GROUP BY e.refmodule.nomm;
+
+SELECT e.ltel
+FROM tEnseignant e
+WHERE e.refmodule.nomm = 'Système';
+
+SELECT * FROM tModule;
+SELECT * FROM tEnseignant;
+
+DROP TYPE Personne;
+DROP TYPE Adresse;
+
+-- Creating the types
+/*CREATE OR REPLACE TYPE Adresse AS OBJECT (
+    no   NUMBER(10),
+    rue VARCHAR2(255),
+    ville VARCHAR2(255),
+    MEMBER FUNCTION displayad RETURN varchar2,
+    MEMBER FUNCTION getno RETURN number,
+    MEMBER FUNCTION compareto(ad IN Adresse) RETURN number
+);
+
+CREATE OR REPLACE TYPE BODY Adresse AS
+    MEMBER FUNCTION displayad RETURN varchar2 IS
+    BEGIN
+        RETURN no || ' ' || rue || ', ' || ville;
+    END displayad;
+
+    MEMBER FUNCTION getno RETURN number IS
+    BEGIN
+        RETURN no;
+    END getno;
+
+    MEMBER FUNCTION compareto(ad IN Adresse) RETURN number IS
+    BEGIN
+        IF no = ad.no AND rue = ad.rue AND ville = ad.ville THEN
+            RETURN 0;
+        ELSIF no > ad.no OR (no = ad.no AND rue > ad.rue) OR (no = ad.no AND rue = ad.rue AND ville > ad.ville) THEN
+            RETURN 1;
+        ELSE
+            RETURN -1;
+        END IF;
+    END compareto;
+END;
+
+CREATE OR REPLACE TYPE Personne AS OBJECT(
+    idp NUMBER(10),
+    nomp VARCHAR2(255),
+    age  NUMBER(10),
+    refAdresse REF Adresse,
+    MEMBER FUNCTION displayp RETURN varchar2,
+    MEMBER FUNCTION getage RETURN number,
+    MEMBER FUNCTION setage(a IN NUMBER) RETURN number
+);
+
+CREATE OR REPLACE TYPE BODY Personne AS
+    MEMBER FUNCTION displayp RETURN varchar2 IS
+    BEGIN
+        RETURN idp || ': ' || nomp || ', ' || age || ' years old, Address: ' || refAdresse.displayad();
+    END displayp;
+
+    MEMBER FUNCTION getage RETURN number IS
+    BEGIN
+        RETURN age;
+    END getage;
+
+    MEMBER FUNCTION setage(a IN OUT NUMBER) RETURN number IS
+    BEGIN
+        age := a;
+        RETURN age;
+    END setage;
+END;
+*/
+-- Creating tables
+DROP TABLE tAdresse;
+CREATE TABLE tAdresse OF Adresse (
+    PRIMARY KEY(no,rue,ville)
+);
+
+DROP TABLE tPersonne;
+CREATE TABLE tPersonne OF Personne(
+    idp PRIMARY KEY,
+    nomp NOT NULL,
+    age NOT NULL,
+    refAdresse SCOPE IS tAdresse
 );
 
 
 
-SELECT * FROM ALL_TYPES WHERE TYPE_NAME = 'MODULE';
+DECLARE
+    myAddress Adresse := Adresse(123, 'Rue de la Paix', 'Paris');
+    myPersonne Personne := Personne(1, 'John Doe', 25, myAddress);
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(myPersonne.displayp);
+END;
+/
 
 
 
-
-
-
-
-
-
-
-
-
-
+DECLARE
+    -- Creating an instance of Personne
+    dupont Personne := Personne(1, 'Dupont', 23, NULL);
+BEGIN
+    -- Displaying the initial state
+    DBMS_OUTPUT.PUT_LINE('Before: ' || dupont.displayp);
+    
+    -- Updating the age
+    dupont.setage(34);
+    
+    -- Displaying the updated state
+    DBMS_OUTPUT.PUT_LINE('After: ' || dupont.displayp);
+END;
+/
 
 
 

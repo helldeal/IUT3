@@ -415,26 +415,40 @@ INSERT INTO tEnseignant VALUES (102, 'Alice', Tel(9876543210), (SELECT REF(m) FR
    
 a) Trouver les modules enseignés par Martin
 ```sql
+SELECT e.refmodule.nomm
+FROM tEnseignant e
+WHERE e.nome = 'Martin';
 
---Outpout :
+--Outpout : Base de données
 ```
 
 b) Trouver le nom de l'enseignant qui intervient dans le module base de données.
 ```sql
+SELECT e.nome
+FROM tEnseignant e
+WHERE e.refmodule.nomm = 'Base de données';
 
---Outpout :
+--Outpout : Martin
 ```
 
 c) Trouver le nombre d’intervenants dans chacun des modules
 ```sql
+SELECT e.refmodule.nomm, COUNT(e.ide) AS nombre_intervenants
+FROM tEnseignant e
+GROUP BY e.refmodule.nomm;
 
 --Outpout :
+Système	1
+Base de données	1
 ```
 
 d) Trouver les numéros de téléphones des intervenants du module système
 ```sql
+SELECT e.ltel
+FROM tEnseignant e
+WHERE e.refmodule.nomm = 'Système';
 
---Outpout :
+--Outpout : S5A08B.TEL(9876543210)
 ```
 
 ### Exercice 2 : méthodes dans les tables d’objets
@@ -444,23 +458,114 @@ d) Trouver les numéros de téléphones des intervenants du module système
 2) Implémenter le schéma logique avec Oracle. La méthode getage() sera implémentée avec
 l’option MAP.
 ```sql
+CREATE OR REPLACE TYPE Adresse AS OBJECT (
+    no   NUMBER(10),
+    rue VARCHAR2(255),
+    ville VARCHAR2(255),
+    MEMBER FUNCTION displayad RETURN varchar2,
+    MEMBER FUNCTION getno RETURN number,
+    MEMBER FUNCTION compareto(ad IN Adresse) RETURN number
+);
 
---Outpout :
+CREATE OR REPLACE TYPE BODY Adresse AS
+    MEMBER FUNCTION displayad RETURN varchar2 IS
+    BEGIN
+        RETURN no || ' ' || rue || ', ' || ville;
+    END displayad;
+
+    MEMBER FUNCTION getno RETURN number IS
+    BEGIN
+        RETURN no;
+    END getno;
+
+    MEMBER FUNCTION compareto(ad IN Adresse) RETURN number IS
+    BEGIN
+        IF no = ad.no AND rue = ad.rue AND ville = ad.ville THEN
+            RETURN 0;
+        ELSIF no > ad.no OR (no = ad.no AND rue > ad.rue) OR (no = ad.no AND rue = ad.rue AND ville > ad.ville) THEN
+            RETURN 1;
+        ELSE
+            RETURN -1;
+        END IF;
+    END compareto;
+END;
+
+CREATE OR REPLACE TYPE Personne AS OBJECT(
+    idp NUMBER(10),
+    nomp VARCHAR2(255),
+    age  NUMBER(10),
+    refAdresse REF Adresse,
+    MEMBER FUNCTION displayp RETURN varchar2,
+    MEMBER FUNCTION getage RETURN number,
+    MEMBER FUNCTION setage(a IN NUMBER) RETURN number
+);
+
+CREATE OR REPLACE TYPE BODY Personne AS
+    MEMBER FUNCTION displayp RETURN varchar2 IS
+    BEGIN
+        RETURN idp || ': ' || nomp || ', ' || age || ' years old, Address: ' || refAdresse.displayad();
+    END displayp;
+
+    MEMBER FUNCTION getage RETURN number IS
+    BEGIN
+        RETURN age;
+    END getage;
+
+    MEMBER FUNCTION setage(a IN OUT NUMBER) RETURN number IS
+    BEGIN
+        age := a;
+        RETURN age;
+    END setage;
+END;
+
+DROP TABLE tAdresse;
+CREATE TABLE tAdresse OF Adresse (
+    PRIMARY KEY(no,rue,ville)
+);
+
+DROP TABLE tPersonne;
+CREATE TABLE tPersonne OF Personne(
+    idp PRIMARY KEY,
+    nomp NOT NULL,
+    age NOT NULL,
+    refAdresse SCOPE IS tAdresse
+);
 ```
 
 3) Ecrire un programme PL/SQL qui permet de
 a) Créer un objet de type Adresse (new adresse (…)), afficher l’adresse sans passer par la
 procédure displayAd()
 ```sql
+DECLARE
+    myAddress Adresse := Adresse(123, 'Rue de la Paix', 'Paris');
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Address: ' || myAddress.no || ' ' || myAddress.rue || ', ' || myAddress.ville);
+END;
+/
 
---Outpout :
+--Outpout : Address: 123 Rue de la Paix, Paris
 ```
 
 b) Créer deux objets de type Adresse, comparer ces objets entre eux et afficher l’objet le plus
 grand
 ```sql
+DECLARE
+    address1 Adresse := Adresse(123, 'Rue A', 'Ville A');
+    address2 Adresse := Adresse(456, 'Rue B', 'Ville B');
+    result NUMBER;
+BEGIN
+    result := address1.compareto(address2);
+    IF result = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Adresses égales');
+    ELSIF result = 1 THEN
+        DBMS_OUTPUT.PUT_LINE('Adresse 1 plus grande');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Adresse 2 plus grande');
+    END IF;
+END;
+/
 
---Outpout :
+--Outpout : Adresse 2 plus grande
 ```
 
 c) Créer une personne et afficher ses propriétés avec son adresse en utilisant la méthode
@@ -473,8 +578,22 @@ displayP()
 d) Afficher l’identifiant de la personne le plus jeune parmi les personnes suivantes :
 pers1 :<1,’Dupont’,30,NULL>; pers2 : <5,’Martin’,22,NULL>
 ```sql
+DECLARE
+    -- Creating instances of Personne
+    pers1 Personne := Personne(1, 'Dupont', 30, NULL);
+    pers2 Personne := Personne(5, 'Martin', 22, NULL);
+    youngestId NUMBER;
+BEGIN
+    IF pers1.getage < pers2.getage THEN
+        youngestId := pers1.idp;
+    ELSE
+        youngestId := pers2.idp;
+    END IF;
+    DBMS_OUTPUT.PUT_LINE('L ID du plus jeune: ' || youngestId);
+END;
+/
 
---Outpout :
+--Outpout : L ID du plus jeune: 5
 ```
 
 e) Créer un objet de type personne : <1,'Dupond', 23,NULL>, modifier l'age de Dupont à 34 (au
@@ -490,7 +609,8 @@ lieu de 23) et afficher le résultat
 --Outpout :
 ```
 
-5) réponder aux questions suivantes avec des requête :
+5) réponder aux questions suivantes avec des requête : 
+   
 a) Affichez la ville de la personne n° 12 (deux versions)
 ```sql
 
