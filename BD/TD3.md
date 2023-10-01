@@ -71,7 +71,7 @@ WHERE (SELECT COUNT(*) FROM TABLE(ltel)) = 0;
 ### Exercice 2
 
 1) Traduire le schéma UML en schéma logique Relationnel-Objet
-   ![](https://cdn.discordapp.com/attachments/763665832949579797/1155888903077765180/image.png)
+   ![](https://cdn.discordapp.com/attachments/763665832949579797/1158113591493398558/image.png?ex=651b10d4&is=6519bf54&hm=27926957d0a8cb3bffb1758d3e5d28454ec0a6e84256048b92390a6a306b5d84&)
 2) Implémenter le schéma logique avec Oracle
 ```sql
 CREATE OR REPLACE TYPE Module AS OBJECT (
@@ -171,7 +171,7 @@ Antoine
 ### Exercice 3
 
 1) Traduire le schéma UML en schéma logique Relationnel-Objet
-   ![](https://cdn.discordapp.com/attachments/763665832949579797/1155888948200079420/image.png)
+   ![](https://cdn.discordapp.com/attachments/763665832949579797/1158114150988390480/image.png?ex=651b115a&is=6519bfda&hm=688a5212e8eb241a7b57ff115340517743e85bec3ff924b3134ddf042162ab94&)
 2) Implémenter le schéma logique avec Oracle
 ```sql
 CREATE OR REPLACE TYPE Ordinateur AS OBJECT (
@@ -244,7 +244,7 @@ Dupond  | 5555555555    | Module_Table(Module(3, 'Réseaux')) | Ordinateur_Table
 
 1) Compléter le schéma UML de l’exercice précédent en tenant compte des nouvelles règles
 2) Traduire le schéma UML en schéma logique Relationnel-Objet.
-   ![](https://cdn.discordapp.com/attachments/763665832949579797/1155890588277800970/image.png)
+   ![](https://cdn.discordapp.com/attachments/763665832949579797/1158114387995918416/image.png?ex=651b1192&is=6519c012&hm=dab63519acfed0d83c44e83a842faffbc6128ea0c4ca8cb2a611808454c17c72&)
 3) Implémentez le schéma logique avec Oracle. Il faut penser à ajouter les contraîntes d’intégrité (clés primaires et étrangères) suite à l’introduction de la table établissement.
 ```sql
 CREATE TABLE Etablissement (
@@ -370,6 +370,7 @@ Dupond	Lyon	15
 ### Exercice 1
 
 1) Traduiser le schéma UML en schéma logique Relationnel-Objet
+![](https://cdn.discordapp.com/attachments/763665832949579797/1158116510062084186/image.png?ex=651b138c&is=6519c20c&hm=b0dcb2e7509aa22ca1b0a681b48d184fe2c9621572a9627654c288b782ac532f&)
 
 2) Implémenter le schéma logique avec Oracle
 ```sql
@@ -454,7 +455,8 @@ WHERE e.refmodule.nomm = 'Système';
 ### Exercice 2 : méthodes dans les tables d’objets
 
 1) Traduire le schéma UML en schéma logique Relationnel-Objet
-   
+![](https://cdn.discordapp.com/attachments/763665832949579797/1158118697144172606/image.png?ex=651b1596&is=6519c416&hm=8d119c065a1b319aeb57f4ed90bfe75b0da2abd98a5e3b643e92e85198cc54af&)
+
 2) Implémenter le schéma logique avec Oracle. La méthode getage() sera implémentée avec
 l’option MAP.
 ```sql
@@ -673,6 +675,7 @@ WHERE p.nomp = 'Martin';
 Cas I) l’héritage entre Etudiant et Personne est implémentée sous forme d’une clé étrangère reliant Etudiant à Personne
 
 1) Traduiser le schéma UML en schéma logique Relationnel-Objet
+![](https://cdn.discordapp.com/attachments/763665832949579797/1158128097837731921/image.png?ex=651b1e57&is=6519ccd7&hm=2a51cdd576c58605b4a4c2b4ac407b5f503e2c945098c6e61b4086049d0faf1b&)
 
 2) Implémenter le schéma logique avec Oracle
 ```sql
@@ -718,6 +721,7 @@ Cas II) l’héritage entre Etudiant et Personne est implémentée sous forme d�
 Etudiant à Personne
 
 1) Traduiser le schéma UML en schéma logique Relationnel-Objet
+![](https://cdn.discordapp.com/attachments/763665832949579797/1158131452475617320/image.png?ex=651b2177&is=6519cff7&hm=6c035c9e7b0955dca9959c110a54cc5208ec1741d9f184721e0201d8eb343bb1&)
 
 2) Implémenter le schéma logique avec Oracle
 ```sql
@@ -757,7 +761,7 @@ Cas III) l’héritage entre Etudiant et Personne est implémentée comme étant
 permettant à la classe Etudiant d’hériter les propriétés et les comportement de la classe Personne.
 
 a) Traduire le schéma UML en schéma logique Relationnel-Objet
-
+![](https://cdn.discordapp.com/attachments/763665832949579797/1158133140947226765/image.png?ex=651b2309&is=6519d189&hm=1fe689abba9b9a5eac8ae0913a16bafe80b2d734fd3507323c12c7e0792dbb3c&) 
 b) Implémenter le schéma logique avec Oracle
 ```sql
 CREATE OR REPLACE TYPE Personne AS OBJECT(
