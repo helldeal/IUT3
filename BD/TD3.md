@@ -605,23 +605,49 @@ lieu de 23) et afficher le résultat
 
 4) Insérer plusieurs personnes dans la base de données en précisant leur adresse
 ```sql
+INSERT INTO tAdresse VALUES (10, 'Rue de la Paix', 'Paris');
+INSERT INTO tAdresse VALUES (62, 'Rue du Faubourg Saint-Honoré', 'Paris');
+INSERT INTO tAdresse VALUES (3, 'Avenue des Champs-Élysées', 'Paris');
 
---Outpout :
+INSERT INTO tPersonne VALUES (1, 'Jean Dupont', 28, (SELECT REF(a) FROM tAdresse a WHERE a.no = 10));
+INSERT INTO tPersonne VALUES (2, 'Marie Leclerc', 35, (SELECT REF(a) FROM tAdresse a WHERE a.no = 62));
+INSERT INTO tPersonne VALUES (3, 'Pierre Lambert', 40, (SELECT REF(a) FROM tAdresse a WHERE a.no = 3));
 ```
 
 5) réponder aux questions suivantes avec des requête : 
    
-a) Affichez la ville de la personne n° 12 (deux versions)
+a) Affichez la ville de la personne n° 1 (deux versions)
 ```sql
+SELECT p.refadresse.ville AS ville
+FROM tPersonne p
+WHERE p.idp = 1;
 
---Outpout :
+--Outpout : Paris
+
+SELECT a.ville AS ville_version_2
+FROM tPersonne p
+JOIN tAdresse a ON p.refAdresse IS NOT NULL AND p.refAdresse = REF(a)
+WHERE p.idp = 1;
+
+--Outpout : Paris
 ```
 
-b) Afficher l’adresse de Martin en utilisant la méthode displayAd() dans un programme
+b) Afficher l’adresse de Pierre Lambert en utilisant la méthode displayAd() dans un programme
 PL/SQL
 ```sql
+DECLARE
+    v_address VARCHAR2(255);
+BEGIN
+    SELECT p.refAdresse.displayad()
+    INTO v_address
+    FROM tPersonne p
+    WHERE p.nomp = 'Pierre Lambert' AND ROWNUM = 1;
 
---Outpout :
+    DBMS_OUTPUT.PUT_LINE('Pierre Lambert habite ' || v_address);
+END;
+/
+
+--Outpout : Pierre Lambert habite 3 Avenue des Champs-Élysées, Paris
 ```
 
 c) Ajuter une personne avec adresse NULL :<4,'Martin',35,NULL>.

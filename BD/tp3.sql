@@ -402,8 +402,6 @@ BEGIN
 END;
 /
 
-
-
 DECLARE
     -- Creating an instance of Personne
     dupont Personne := Personne(1, 'Dupont', 23, NULL);
@@ -419,10 +417,49 @@ BEGIN
 END;
 /
 
+DECLARE
+    address1 Adresse := Adresse(101, 'Rue A', 'Ville A');
+    address2 Adresse := Adresse(102, 'Rue B', 'Ville B');
+    personne1 Personne := Personne(1, 'John Doe', 25, address1);
+    personne2 Personne := Personne(2, 'Jane Doe', 30, address2);
+BEGIN
+    INSERT INTO tAdresse VALUES address1;
+    INSERT INTO tAdresse VALUES address2;
+    INSERT INTO tPersonne VALUES personne1;
+    INSERT INTO tPersonne VALUES personne2;
+    COMMIT;
+END;
+/
 
 
 
+INSERT INTO tAdresse VALUES (10, 'Rue de la Paix', 'Paris');
+INSERT INTO tAdresse VALUES (62, 'Rue du Faubourg Saint-Honoré', 'Paris');
+INSERT INTO tAdresse VALUES (3, 'Avenue des Champs-Élysées', 'Paris');
 
+INSERT INTO tPersonne VALUES (1, 'Jean Dupont', 28, (SELECT REF(a) FROM tAdresse a WHERE a.no = 10));
+INSERT INTO tPersonne VALUES (2, 'Marie Leclerc', 35, (SELECT REF(a) FROM tAdresse a WHERE a.no = 62));
+INSERT INTO tPersonne VALUES (3, 'Pierre Lambert', 40, (SELECT REF(a) FROM tAdresse a WHERE a.no = 3));
 
+-- Afficher la ville de la personne n° 1
+SELECT p.refadresse.ville AS ville
+FROM tPersonne p
+WHERE p.idp = 1;
+
+SELECT a.ville AS ville_version_2
+FROM tPersonne p
+JOIN tAdresse a ON p.refAdresse IS NOT NULL AND p.refAdresse = REF(a)
+WHERE p.idp = 1;
+
+DECLARE
+    v_address VARCHAR2(255);
+BEGIN
+    SELECT p.refAdresse.displayad()
+    INTO v_address
+    FROM tPersonne p
+    WHERE p.nomp = 'Pierre Lambert' AND ROWNUM = 1;
+
+    DBMS_OUTPUT.PUT_LINE('Pierre Lambert habite ' || v_address);
+END;
 
 
