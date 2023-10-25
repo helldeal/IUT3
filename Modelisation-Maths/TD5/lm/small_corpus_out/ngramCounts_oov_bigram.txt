@@ -1,0 +1,22 @@
+</s>	3
+écoute	3
+<unk> </s>	2
+<s>	3
+<s> <unk>	2
+<unk> écoute	2
+écoute <unk>	1
+<unk>	3
+une autre	1
+une	2
+chanson	2
+écoute une	2
+autre	1
+autre chanson	1
+chanson </s>	1
+elle	1
+une chanson	1
+<s> elle	1
+chanson de	1
+elle écoute	1
+de <unk>	1
+de	1
