@@ -1,0 +1,28 @@
+thom	1
+écoute	3
+antoine	1
+</s>	3
+antoine écoute	1
+<s>	3
+écoute thom	1
+<s> antoine	1
+thom </s>	1
+chanson	2
+écoute une	2
+une	2
+chanson </s>	1
+denis	1
+autre	1
+denis écoute	1
+autre chanson	1
+<s> denis	1
+une autre	1
+elle écoute	1
+elle	1
+lionel </s>	1
+une chanson	1
+de lionel	1
+de	1
+<s> elle	1
+lionel	1
+chanson de	1

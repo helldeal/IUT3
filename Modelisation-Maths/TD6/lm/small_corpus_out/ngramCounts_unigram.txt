@@ -1,0 +1,12 @@
+thom	1
+<s>	3
+écoute	3
+antoine	1
+</s>	3
+chanson	2
+denis	1
+une	2
+autre	1
+elle	1
+de	1
+lionel	1
