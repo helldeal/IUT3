@@ -1,0 +1,9 @@
+</s>	3
+<unk>	3
+écoute	3
+<s>	3
+chanson	2
+une	2
+autre	1
+elle	1
+de	1
