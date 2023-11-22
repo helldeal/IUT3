@@ -14,7 +14,8 @@ class UserService {
         return users[user.email]
     }
 
-    fun getAll(): MutableMap<String, User> {
+    fun getAll(age: Int?=null): Map<String, User> {
+        if (age!=null)return users.filter { it.value.age == age }
         return users
     }
     fun getUser(email: String): User? {
