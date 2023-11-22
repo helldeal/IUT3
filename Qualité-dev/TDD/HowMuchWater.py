@@ -4,9 +4,6 @@ def hmw_game(terrain):
     max_index = terrain.index(max(terrain)) 
     gauche = terrain[:max_index]  
     droite = terrain[max_index + 1:] 
-    print('maxbase =',maxHeight)
-    print('gauche =',gauche)
-    print('droite =',droite)
     
     score=0
     if len(droite)!=0:
@@ -18,12 +15,9 @@ def hmw_game(terrain):
 def traitementDroite(liste):
     score=0
     maxHeight=max(liste)
-    print('maxdirect =',maxHeight)
     max_index = liste.index(max(liste)) 
     gauche = liste[:max_index] 
-    print('gauche =',gauche)
     droite = liste[max_index + 1:] 
-    print('droite =',droite)
     if len(gauche)!=0:
         for i in gauche:
             score+=maxHeight-i
@@ -34,12 +28,9 @@ def traitementDroite(liste):
 def traitementGauche(liste):
     score=0
     maxHeight=max(liste)
-    print('maxdirect =',maxHeight)
     max_index = liste.index(max(liste)) 
     gauche = liste[:max_index] 
-    print('gauche =',gauche)
     droite = liste[max_index + 1:] 
-    print('droite =',droite)
     if len(droite)!=0:
         for i in droite:
             score+=maxHeight-i
